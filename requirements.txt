@@ -1,0 +1,13 @@
+flask>=3.0.0
+flask-sqlalchemy>=3.1.0
+flask-login>=0.6.3
+flask-wtf>=1.2.0
+wtforms>=3.1.0
+weasyprint>=60.0
+flask-migrate>=4.0.0
+email-validator>=2.1.0
+gigachat
+gigachat
+requests
+urllib3
+cryptography

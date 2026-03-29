@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Интеграции{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Подключение к платформам</h2>
+</div>
+
+<div class="alert alert-info mb-4">
+    <h5>Как это работает?</h5>
+    <p class="mb-0">
+        Подключите ваш аккаунт на HH.ru или SuperJob, чтобы публиковать резюме напрямую из нашего конструктора. 
+        Вы один раз разрешаете нашему приложению управлять резюме, и затем сможете публиковать и обновлять их в один клик.
+    </p>
+</div>
+
+<div class="row">
+    {% for platform_id, platform in platforms.items() %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    {% if platform_id == 'hh' %}
+                    <div class="platform-icon bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; font-weight: bold;">
+                        HH
+                    </div>
+                    {% else %}
+                    <div class="platform-icon bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; font-weight: bold;">
+                        SJ
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h5 class="card-title mb-0">{{ platform.name }}</h5>
+                        <small class="text-muted">{{ platform.description }}</small>
+                    </div>
+                </div>
+                
+                {% if not platform.is_configured %}
+                <div class="alert alert-warning mb-3">
+                    <small>API не настроен. Обратитесь к администратору.</small>
+                </div>
+                {% endif %}
+                
+                <div class="connection-status mb-3">
+                    {% if platform.is_connected %}
+                    <div class="d-flex align-items-center text-success">
+                        <span class="badge bg-success me-2">Подключено</span>
+                        <small class="text-muted">Готово к публикации резюме</small>
+                    </div>
+                    {% elif platform.connection and platform.connection.is_active %}
+                    <div class="d-flex align-items-center text-warning">
+                        <span class="badge bg-warning text-dark me-2">Токен истёк</span>
+                        <small class="text-muted">Требуется переподключение</small>
+                    </div>
+                    {% else %}
+                    <div class="d-flex align-items-center text-secondary">
+                        <span class="badge bg-secondary me-2">Не подключено</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="d-grid gap-2">
+                    {% if platform.is_connected %}
+                    <button class="btn btn-outline-danger btn-disconnect" 
+                            data-platform="{{ platform_id }}"
+                            data-url="{{ platform.disconnect_url }}">
+                        Отключить {{ platform.name }}
+                    </button>
+                    {% elif platform.is_configured %}
+                    <a href="{{ platform.connect_url }}" class="btn btn-primary">
+                        Подключить {{ platform.name }}
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary" disabled>
+                        Подключить {{ platform.name }}
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if platform.is_connected %}
+            <div class="card-footer bg-light">
+                <small class="text-muted">
+                    {% if platform.connection and platform.connection.expires_at %}
+                    Токен действителен до: {{ platform.connection.expires_at.strftime('%d.%m.%Y %H:%M') }}
+                    {% endif %}
+                </small>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Инструкция по подключению</h5>
+    </div>
+    <div class="card-body">
+        <ol class="mb-0">
+            <li class="mb-2">
+                <strong>Нажмите "Подключить"</strong> - вы будете перенаправлены на официальный сайт платформы.
+            </li>
+            <li class="mb-2">
+                <strong>Войдите в свой аккаунт</strong> - используйте ваши данные от HH.ru или SuperJob.
+            </li>
+            <li class="mb-2">
+                <strong>Разрешите доступ</strong> - нажмите "Разрешить" для предоставления доступа к управлению резюме.
+            </li>
+            <li class="mb-2">
+                <strong>Готово!</strong> - после возврата вы увидите статус "Подключено" и сможете публиковать резюме.
+            </li>
+        </ol>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-disconnect').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const platform = this.dataset.platform;
+            const url = this.dataset.url;
+            
+            if (!confirm('Вы уверены, что хотите отключить этот аккаунт?')) {
+                return;
+            }
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Ошибка: ' + (data.error || 'Не удалось отключить'));
+                }
+            })
+            .catch(error => {
+                alert('Ошибка сети: ' + error);
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

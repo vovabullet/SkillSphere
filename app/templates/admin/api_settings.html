@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Настройки API{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Настройки API платформ</h2>
+        <a href="{{ url_for('admin.index') }}" class="btn btn-outline-secondary">Назад</a>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">HH.ru</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('admin.save_api_settings', platform='hh') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label for="hh_client_id" class="form-label">Client ID</label>
+                            <input type="text" class="form-control" id="hh_client_id" name="client_id" 
+                                   value="{{ settings.hh.client_id }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="hh_client_secret" class="form-label">Client Secret</label>
+                            <input type="password" class="form-control" id="hh_client_secret" name="client_secret" 
+                                   value="{{ settings.hh.client_secret }}" required>
+                            <div class="form-text">Секретный ключ вашего приложения</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="hh_redirect_uri" class="form-label">Redirect URI</label>
+                            <input type="url" class="form-control" id="hh_redirect_uri" name="redirect_uri" 
+                                   value="{{ settings.hh.redirect_uri }}" 
+                                   placeholder="https://your-domain.com/integrations/callback/hh">
+                            <div class="form-text">URL для перенаправления после авторизации</div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            {% if settings.hh.has_db_config %}
+                            <button type="button" class="btn btn-outline-danger" 
+                                    onclick="if(confirm('Удалить настройки HH.ru?')) document.getElementById('delete-hh').submit();">
+                                Удалить
+                            </button>
+                            {% endif %}
+                        </div>
+                    </form>
+                    
+                    <form id="delete-hh" action="{{ url_for('admin.delete_api_settings', platform='hh') }}" method="POST" style="display:none;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">SuperJob</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('admin.save_api_settings', platform='superjob') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label for="sj_client_id" class="form-label">Client ID</label>
+                            <input type="text" class="form-control" id="sj_client_id" name="client_id" 
+                                   value="{{ settings.superjob.client_id }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="sj_client_secret" class="form-label">Client Secret</label>
+                            <input type="password" class="form-control" id="sj_client_secret" name="client_secret" 
+                                   value="{{ settings.superjob.client_secret }}" required>
+                            <div class="form-text">Секретный ключ вашего приложения</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="sj_redirect_uri" class="form-label">Redirect URI</label>
+                            <input type="url" class="form-control" id="sj_redirect_uri" name="redirect_uri" 
+                                   value="{{ settings.superjob.redirect_uri }}"
+                                   placeholder="https://your-domain.com/integrations/callback/superjob">
+                            <div class="form-text">URL для перенаправления после авторизации</div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">Сохранить</button>
+                            {% if settings.superjob.has_db_config %}
+                            <button type="button" class="btn btn-outline-danger" 
+                                    onclick="if(confirm('Удалить настройки SuperJob?')) document.getElementById('delete-sj').submit();">
+                                Удалить
+                            </button>
+                            {% endif %}
+                        </div>
+                    </form>
+                    
+                    <form id="delete-sj" action="{{ url_for('admin.delete_api_settings', platform='superjob') }}" method="POST" style="display:none;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">GigaChat (ИИ-помощник)</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('admin.save_api_settings', platform='gigachat') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label for="gigachat_api_key" class="form-label">API ключ (Authorization Key)</label>
+                            <input type="password" class="form-control" id="gigachat_api_key" name="api_key" 
+                                   value="{{ settings.gigachat.api_key }}" required
+                                   placeholder="Введите ключ авторизации GigaChat">
+                            <div class="form-text">Ключ в формате Base64 для авторизации в GigaChat API</div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-info text-white">Сохранить</button>
+                            {% if settings.gigachat.has_db_config %}
+                            <button type="button" class="btn btn-outline-danger" 
+                                    onclick="if(confirm('Удалить настройки GigaChat?')) document.getElementById('delete-gigachat').submit();">
+                                Удалить
+                            </button>
+                            {% endif %}
+                        </div>
+                    </form>
+                    
+                    <form id="delete-gigachat" action="{{ url_for('admin.delete_api_settings', platform='gigachat') }}" method="POST" style="display:none;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Инструкция по настройке</h5>
+        </div>
+        <div class="card-body">
+            <h6>GigaChat (ИИ)</h6>
+            <ol>
+                <li>Зарегистрируйтесь на <a href="https://developers.sber.ru/portal/products/gigachat-api" target="_blank">developers.sber.ru</a></li>
+                <li>Создайте проект и получите Authorization Key</li>
+                <li>Скопируйте ключ и введите его в форму выше</li>
+            </ol>
+            
+            <h6 class="mt-4">HH.ru</h6>
+            <ol>
+                <li>Зарегистрируйте приложение на <a href="https://dev.hh.ru/" target="_blank">dev.hh.ru</a></li>
+                <li>Скопируйте Client ID и Client Secret</li>
+                <li>Введите их в форму выше</li>
+                <li>Укажите Redirect URI в настройках приложения на HH.ru</li>
+            </ol>
+            
+            <h6 class="mt-4">SuperJob</h6>
+            <ol>
+                <li>Зарегистрируйте приложение на <a href="https://api.superjob.ru/" target="_blank">api.superjob.ru</a></li>
+                <li>Скопируйте Client ID и Client Secret</li>
+                <li>Введите их в форму выше</li>
+                <li>Укажите Redirect URI в настройках приложения на SuperJob</li>
+            </ol>
+            
+            <div class="alert alert-info mt-3">
+                <strong>Как это работает для пользователей:</strong>
+                <ol class="mb-0">
+                    <li>Пользователь нажимает "Опубликовать на HH.ru" в своём резюме</li>
+                    <li>Открывается страница HH.ru с запросом разрешения</li>
+                    <li>Пользователь входит в свой аккаунт HH.ru и нажимает "Разрешить"</li>
+                    <li>После этого резюме автоматически публикуется</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

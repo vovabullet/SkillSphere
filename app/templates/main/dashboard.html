@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Мои резюме{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Мои резюме</h2>
+    <a href="{{ url_for('resume.create') }}" class="btn btn-primary">Создать новое резюме</a>
+</div>
+
+{% if resumes %}
+<div class="row">
+    {% for resume in resumes %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ resume.title }}</h5>
+                <p class="card-text text-muted small">
+                    Шаблон: {{ resume.template }}<br>
+                    Обновлено: {{ resume.updated_at.strftime('%d.%m.%Y %H:%M') }}<br>
+                    {% if resume.is_draft %}
+                        <span class="badge bg-warning">Черновик</span>
+                    {% else %}
+                        <span class="badge bg-success">Опубликовано</span>
+                    {% endif %}
+                </p>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('resume.edit', id=resume.id) }}" class="btn btn-primary">✏️ Редактировать</a>
+                    <div class="btn-group" role="group">
+                        <a href="{{ url_for('resume.preview', id=resume.id) }}" class="btn btn-outline-primary btn-sm" target="_blank">👁️ Просмотр</a>
+                        <a href="{{ url_for('resume.export_pdf', id=resume.id) }}" class="btn btn-success btn-sm" target="_blank">📄 PDF</a>
+                    </div>
+                    <form action="{{ url_for('resume.delete', id=resume.id) }}" method="POST" onsubmit="return confirm('Вы уверены, что хотите удалить это резюме?');">
+                        <button type="submit" class="btn btn-danger btn-sm w-100">🗑️ Удалить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    У вас пока нет резюме. <a href="{{ url_for('resume.create') }}">Создайте первое резюме</a>
+</div>
+{% endif %}
+{% endblock %}

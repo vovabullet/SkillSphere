@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Образец резюме: {{ example.title }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('main.index') }}" class="text-decoration-none">&larr; На главную</a>
+</div>
+
+<h2 class="mb-4">{{ example.icon }} Образец резюме: {{ example.title }}</h2>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <h3 class="mb-1">{{ example.full_name }}</h3>
+                        <p class="text-primary fs-5 mb-3">{{ example.title }}</p>
+                        <div class="text-muted">
+                            <p class="mb-1">{{ example.email }}</p>
+                            <p class="mb-1">{{ example.phone }}</p>
+                            <p class="mb-0">{{ example.location }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="mb-4">
+                    <h5 class="text-primary mb-3">О себе</h5>
+                    <p>{{ example.summary }}</p>
+                </div>
+                
+                <hr>
+                
+                <div class="mb-4">
+                    <h5 class="text-primary mb-3">Опыт работы</h5>
+                    {% for exp in example.experience %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ exp.position }}</strong>
+                            <span class="text-muted">{{ exp.period }}</span>
+                        </div>
+                        <div class="text-muted">{{ exp.company }}</div>
+                        <p class="mt-2 mb-0">{{ exp.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <hr>
+                
+                <div class="mb-4">
+                    <h5 class="text-primary mb-3">Образование</h5>
+                    {% for edu in example.education %}
+                    <div class="mb-2">
+                        <strong>{{ edu.institution }}</strong>
+                        <div class="text-muted">{{ edu.degree }}, {{ edu.year }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <hr>
+                
+                <div class="mb-2">
+                    <h5 class="text-primary mb-3">Навыки</h5>
+                    {% for skill in example.skills %}
+                    <span class="badge bg-secondary me-2 mb-2 fs-6">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body text-center">
+                <h5 class="card-title">Хотите такое же резюме?</h5>
+                <p class="card-text text-muted">Создайте своё резюме на основе этого примера</p>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg w-100">Создать резюме</a>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h6 class="mb-0">Другие примеры</h6>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="{{ url_for('main.example_profession', profession='sales-manager') }}" class="list-group-item list-group-item-action">💼 Менеджер по продажам</a>
+                <a href="{{ url_for('main.example_profession', profession='programmer') }}" class="list-group-item list-group-item-action">💻 Программист</a>
+                <a href="{{ url_for('main.example_profession', profession='accountant') }}" class="list-group-item list-group-item-action">📊 Бухгалтер</a>
+                <a href="{{ url_for('main.example_profession', profession='lawyer') }}" class="list-group-item list-group-item-action">⚖️ Юрист</a>
+                <a href="{{ url_for('main.example_profession', profession='designer') }}" class="list-group-item list-group-item-action">🎨 Дизайнер</a>
+                <a href="{{ url_for('main.example_profession', profession='engineer') }}" class="list-group-item list-group-item-action">🔧 Инженер</a>
+                <a href="{{ url_for('main.example_profession', profession='teacher') }}" class="list-group-item list-group-item-action">👨‍🏫 Учитель</a>
+                <a href="{{ url_for('main.example_profession', profession='doctor') }}" class="list-group-item list-group-item-action">🏥 Врач</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

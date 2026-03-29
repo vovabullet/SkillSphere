@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}Создать резюме{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <h2 class="mb-4">Создать новое резюме</h2>
+        
+        <div class="card mb-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Быстрый старт с ИИ</h5>
+            </div>
+            <div class="card-body">
+                <p>Введите желаемую должность, и ИИ заполнит поля автоматически!</p>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="ai-job-input" 
+                           placeholder="Например: Программист, Дизайнер, Менеджер..." 
+                           maxlength="100">
+                    <button type="button" class="btn btn-primary" id="ai-generate-btn" onclick="generateWithAI()">
+                        <span id="ai-btn-text">Заполнить с ИИ</span>
+                        <span id="ai-btn-spinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                    </button>
+                </div>
+                <div id="ai-error" class="text-danger mt-2 d-none"></div>
+                <div id="ai-success" class="text-success mt-2 d-none"></div>
+            </div>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" id="resume-form">
+            {{ form.hidden_tag() }}
+            
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Основная информация</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label") }}
+                        {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), id="title-field") }}
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Например: "Frontend разработчик" или "Менеджер по продажам"</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.template.label(class="form-label") }}
+                        {{ form.template(class="form-select" + (" is-invalid" if form.template.errors else "")) }}
+                        {% if form.template.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.template.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Контактная информация</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        {{ form.full_name.label(class="form-label") }}
+                        {{ form.full_name(class="form-control" + (" is-invalid" if form.full_name.errors else ""), id="full_name-field") }}
+                        {% if form.full_name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.full_name.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), id="email-field") }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.phone.label(class="form-label") }}
+                        {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else ""), id="phone-field") }}
+                        {% if form.phone.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.phone.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.location.label(class="form-label") }}
+                        {{ form.location(class="form-control" + (" is-invalid" if form.location.errors else ""), id="location-field") }}
+                        {% if form.location.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.location.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.summary.label(class="form-label") }}
+                        {{ form.summary(class="form-control", rows="4", id="summary-field") }}
+                        {% if form.summary.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.summary.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Краткое описание ваших навыков и опыта</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.photo.label(class="form-label") }}
+                        {{ form.photo(class="form-control" + (" is-invalid" if form.photo.errors else "")) }}
+                        {% if form.photo.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.photo.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Загрузите свою фотографию для резюме (JPG, PNG, GIF)</small>
+                    </div>
+                </div>
+            </div>
+            
+            <input type="hidden" id="prefilled-skills" name="prefilled_skills" value="">
+            <input type="hidden" id="prefilled-experience" name="prefilled_experience" value="">
+            <input type="hidden" id="prefilled-education" name="prefilled_education" value="">
+            
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">Создать резюме</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function generateWithAI() {
+    const jobInput = document.getElementById('ai-job-input');
+    const btn = document.getElementById('ai-generate-btn');
+    const btnText = document.getElementById('ai-btn-text');
+    const btnSpinner = document.getElementById('ai-btn-spinner');
+    const errorDiv = document.getElementById('ai-error');
+    const successDiv = document.getElementById('ai-success');
+    
+    const jobTitle = jobInput.value.trim();
+    
+    if (!jobTitle) {
+        errorDiv.textContent = 'Пожалуйста, введите название должности';
+        errorDiv.classList.remove('d-none');
+        successDiv.classList.add('d-none');
+        return;
+    }
+    
+    btn.disabled = true;
+    btnText.textContent = 'Генерация...';
+    btnSpinner.classList.remove('d-none');
+    errorDiv.classList.add('d-none');
+    successDiv.classList.add('d-none');
+    
+    fetch('/resume/ai-generate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value
+        },
+        body: JSON.stringify({ job_title: jobTitle })
+    })
+    .then(response => response.json())
+    .then(result => {
+        btn.disabled = false;
+        btnText.textContent = 'Заполнить с ИИ';
+        btnSpinner.classList.add('d-none');
+        
+        if (result.success) {
+            const data = result.data;
+            
+            document.getElementById('title-field').value = data.title || '';
+            document.getElementById('summary-field').value = data.summary || '';
+            
+            if (data.skills) {
+                document.getElementById('prefilled-skills').value = JSON.stringify(data.skills);
+            }
+            
+            successDiv.textContent = 'Данные успешно сгенерированы! Заполните контактную информацию.';
+            successDiv.classList.remove('d-none');
+            errorDiv.classList.add('d-none');
+        } else {
+            errorDiv.textContent = result.error || 'Произошла ошибка';
+            errorDiv.classList.remove('d-none');
+            successDiv.classList.add('d-none');
+        }
+    })
+    .catch(error => {
+        btn.disabled = false;
+        btnText.textContent = 'Заполнить с ИИ';
+        btnSpinner.classList.add('d-none');
+        errorDiv.textContent = 'Ошибка соединения. Попробуйте позже.';
+        errorDiv.classList.remove('d-none');
+        successDiv.classList.add('d-none');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const jobInput = document.getElementById('ai-job-input');
+    if (jobInput) {
+        jobInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                generateWithAI();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

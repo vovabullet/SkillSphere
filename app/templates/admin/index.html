@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Панель администратора{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Панель администратора</h2>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Настройки API</h5>
+                </div>
+                <div class="card-body">
+                    <p>Управление API ключами и подключениями</p>
+                    
+                    <div class="mb-3">
+                        <strong>GigaChat (ИИ):</strong>
+                        {% if gigachat_configured %}
+                            <span class="badge bg-success">Настроено</span>
+                        {% else %}
+                            <span class="badge bg-warning">Не настроено</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>HH.ru:</strong>
+                        {% if hh_configured %}
+                            <span class="badge bg-success">Настроено</span>
+                        {% else %}
+                            <span class="badge bg-warning">Не настроено</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>SuperJob:</strong>
+                        {% if superjob_configured %}
+                            <span class="badge bg-success">Настроено</span>
+                        {% else %}
+                            <span class="badge bg-warning">Не настроено</span>
+                        {% endif %}
+                    </div>
+                    
+                    <a href="{{ url_for('admin.api_settings') }}" class="btn btn-primary">Настроить API</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Безопасность</h5>
+                </div>
+                <div class="card-body">
+                    <p>Управление учётной записью администратора</p>
+                    
+                    <div class="mb-3">
+                        <strong>Email:</strong> {{ current_user.email }}
+                    </div>
+                    
+                    <a href="{{ url_for('admin.change_password') }}" class="btn btn-warning">Сменить пароль</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

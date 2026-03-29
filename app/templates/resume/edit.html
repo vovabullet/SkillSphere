@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать резюме{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <h2 class="mb-4">{{ resume.title }}</h2>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-bold">Заполненность резюме</span>
+                    <span class="badge bg-primary" id="completion-percentage">{{ resume.get_completion_percentage() }}%</span>
+                </div>
+                <div class="progress" style="height: 20px;">
+                    <div class="progress-bar bg-success progress-bar-striped" id="completion-bar" role="progressbar" style="width: {{ resume.get_completion_percentage() }}%"></div>
+                </div>
+                <small class="text-muted">Чем полнее резюме, тем больше шансов получить приглашение на собеседование</small>
+            </div>
+        </div>
+        
+        <ul class="nav nav-tabs mb-3" id="resumeTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button">Основное</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education" type="button">Образование</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="experience-tab" data-bs-toggle="tab" data-bs-target="#experience" type="button">Опыт работы</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="skills-tab" data-bs-toggle="tab" data-bs-target="#skills" type="button">Навыки</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="portfolio-tab" data-bs-toggle="tab" data-bs-target="#portfolio" type="button">Портфолио</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="resumeTabsContent">
+            <div class="tab-pane fade show active" id="basic" role="tabpanel">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Название резюме</label>
+                            <input type="text" class="form-control" id="title" value="{{ resume.title }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Шаблон</label>
+                            <select class="form-select" id="template">
+                                <option value="classic" {% if resume.template == 'classic' %}selected{% endif %}>Классический</option>
+                                <option value="modern" {% if resume.template == 'modern' %}selected{% endif %}>Современный</option>
+                                <option value="minimal" {% if resume.template == 'minimal' %}selected{% endif %}>Минималистичный</option>
+                                <option value="tech" {% if resume.template == 'tech' %}selected{% endif %}>Технический</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Полное имя</label>
+                            <input type="text" class="form-control" id="full_name" value="{{ resume.full_name or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" value="{{ resume.email or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Телефон</label>
+                            <input type="text" class="form-control" id="phone" value="{{ resume.phone or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Местоположение</label>
+                            <input type="text" class="form-control" id="location" value="{{ resume.location or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">О себе</label>
+                            <textarea class="form-control" id="summary" rows="4">{{ resume.summary or '' }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Фотография</label>
+                            {% if resume.photo_path %}
+                            <div class="mb-2">
+                                <img src="{{ url_for('static', filename='uploads/' + resume.photo_path) }}" alt="Фото" class="img-thumbnail" style="max-width: 200px;">
+                            </div>
+                            {% endif %}
+                            <input type="file" class="form-control" id="photo" accept="image/*">
+                            <small class="form-text text-muted">Загрузите свою фотографию для резюме (JPG, PNG, GIF)</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="education" role="tabpanel">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div id="education-list"></div>
+                        <button type="button" class="btn btn-outline-primary" onclick="addEducation()">Добавить образование</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="experience" role="tabpanel">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div id="experience-list"></div>
+                        <button type="button" class="btn btn-outline-primary" onclick="addExperience()">Добавить опыт работы</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="skills" role="tabpanel">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div id="skills-list"></div>
+                        <button type="button" class="btn btn-outline-primary" onclick="addSkill()">Добавить навык</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="portfolio" role="tabpanel">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="text-muted mb-3">Добавьте примеры ваших работ, проектов или достижений</p>
+                        <div id="portfolio-list"></div>
+                        <button type="button" class="btn btn-outline-primary" onclick="addPortfolioItem()">Добавить работу</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-grid gap-2 mb-4">
+            <button type="button" class="btn btn-primary" onclick="saveResume()">Сохранить изменения</button>
+        </div>
+        
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="resume-sidebar">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Действия</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('resume.preview', id=resume.id) }}" target="_blank" class="btn btn-outline-secondary">
+                            Предварительный просмотр
+                        </a>
+                        <a href="{{ url_for('resume.export_pdf', id=resume.id) }}" target="_blank" class="btn btn-outline-success">
+                            Экспорт в PDF
+                        </a>
+                        {% if resume.is_draft %}
+                        <button type="button" class="btn btn-outline-info" onclick="publishResume()">
+                            Опубликовать
+                        </button>
+                        {% endif %}
+                        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-primary">
+                            Вернуться к списку
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>📤 Публикация на платформах</h5>
+                </div>
+                <div class="card-body">
+                    <div id="publish-status" class="alert alert-info mb-3" style="display:none;">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                            <span id="publish-status-text">Публикация...</span>
+                        </div>
+                    </div>
+                    <div id="publish-result" class="alert mb-3" style="display:none;"></div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-danger" onclick="exportToHH()">
+                            🔴 Опубликовать на HH.ru
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="exportToSuperJob()">
+                            🟢 Опубликовать на SuperJob
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" onclick="exportToLinkedIn()">
+                            🔵 Экспорт для LinkedIn
+                        </button>
+                    </div>
+                    <p class="small text-muted mt-3 mb-0">
+                        Подключите платформы в разделе <a href="/integrations/platforms">Интеграции</a>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>🤖 AI Ассистент</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary" onclick="analyzeResume()">
+                            Проанализировать резюме
+                        </button>
+                        <button type="button" class="btn btn-outline-success" onclick="generateSummary()">
+                            Сгенерировать "О себе"
+                        </button>
+                        <button type="button" class="btn btn-outline-info" onclick="showImproveTextModal()">
+                            Улучшить текст
+                        </button>
+                    </div>
+                    <div id="ai-result" class="mt-3" style="display:none;">
+                        <div class="alert alert-info">
+                            <div id="ai-result-content"></div>
+                        </div>
+                    </div>
+                    <div id="ai-loading" class="mt-3 text-center" style="display:none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Загрузка...</span>
+                        </div>
+                        <p class="mt-2">AI обрабатывает ваш запрос...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="improveTextModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Улучшить текст с помощью AI</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Текст для улучшения</label>
+                    <textarea class="form-control" id="textToImprove" rows="4" placeholder="Вставьте текст..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Желаемая должность (опционально)</label>
+                    <input type="text" class="form-control" id="jobTitleForImprove" placeholder="Например: Frontend разработчик">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" onclick="improveText()">Улучшить</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/resume_editor.js') }}"></script>
+<script>
+    const resumeData = {
+        id: {{ resume.id }},
+        education: {{ resume.get_education()|tojson|safe }},
+        experience: {{ resume.get_experience()|tojson|safe }},
+        skills: {{ resume.get_skills()|tojson|safe }},
+        portfolio: {{ resume.get_portfolio()|tojson|safe }}
+    };
+    
+    const resumeCustomization = {{ resume.get_customization()|tojson|safe }};
+    
+    window.addEventListener('DOMContentLoaded', function() {
+        loadEducation();
+        loadExperience();
+        loadSkills();
+        loadPortfolio();
+    });
+</script>
+{% endblock %}

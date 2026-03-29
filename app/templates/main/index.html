@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="px-4 py-5 my-5 text-center hero-section">
+    <h1 class="display-4 fw-bold mb-3">Создайте профессиональное резюме</h1>
+    <div class="col-lg-8 mx-auto">
+        <p class="lead mb-4">
+            Наша платформа поможет вам создать качественное резюме с профессиональным дизайном 
+            и легко отправить его на популярные площадки трудоустройства.
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-5 py-3">Создать резюме бесплатно</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg px-4 py-3">Вход</a>
+        </div>
+    </div>
+</div>
+
+<div class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="display-4 fw-bold text-primary">1 000+</div>
+                <p class="lead">Резюме создано</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="display-4 fw-bold text-success">50+</div>
+                <p class="lead">Успешных трудоустройств</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="display-4 fw-bold text-info">4</div>
+                <p class="lead">Профессиональных шаблона</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 py-5">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <div class="display-6 mb-3">📝</div>
+                <h5 class="card-title">Простой редактор</h5>
+                <p class="card-text text-muted">Интуитивно понятный конструктор резюме с возможностью добавления всех необходимых разделов.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <div class="display-6 mb-3">🎨</div>
+                <h5 class="card-title">Шаблоны дизайна</h5>
+                <p class="card-text text-muted">Выберите один из профессиональных шаблонов, который подчеркнет вашу индивидуальность.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <div class="display-6 mb-3">🚀</div>
+                <h5 class="card-title">Экспорт и отправка</h5>
+                <p class="card-text text-muted">Скачайте резюме в PDF и отправьте на HH.ru, SuperJob или другие площадки одним кликом.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="py-5">
+    <h2 class="text-center mb-5">Образцы резюме по профессиям</h2>
+    <p class="text-center text-muted mb-4">Ознакомьтесь с примерами, чтобы понять, как должно выглядеть хорошее резюме</p>
+    
+    <div class="row g-3">
+        <div class="col-md-3 col-6">
+            <a href="{{ url_for('main.example_profession', profession='sales-manager') }}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <div class="card-body text-center p-3">
+                        <div class="fs-3 mb-2">💼</div>
+                        <h6 class="card-title mb-0">Менеджер по продажам</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="{{ url_for('main.example_profession', profession='programmer') }}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <div class="card-body text-center p-3">
+                        <div class="fs-3 mb-2">💻</div>
+                        <h6 class="card-title mb-0">Программист</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="{{ url_for('main.example_profession', profession='accountant') }}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <div class="card-body text-center p-3">
+                        <div class="fs-3 mb-2">📊</div>
+                        <h6 class="card-title mb-0">Бухгалтер</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="{{ url_for('main.example_profession', profession='lawyer') }}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <div class="card-body text-center p-3">
+                        <div class="fs-3 mb-2">⚖️</div>
+                        <h6 class="card-title mb-0">Юрист</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="{{ url_for('main.example_profession', profession='designer') }}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <div class="card-body text-center p-3">
+                        <div class="fs-3 mb-2">🎨</div>
+                        <h6 class="card-title mb-0">Дизайнер</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="{{ url_for('main.example_profession', profession='engineer') }}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <div class="card-body text-center p-3">
+                        <div class="fs-3 mb-2">🔧</div>
+                        <h6 class="card-title mb-0">Инженер</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="{{ url_for('main.example_profession', profession='teacher') }}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <div class="card-body text-center p-3">
+                        <div class="fs-3 mb-2">👨‍🏫</div>
+                        <h6 class="card-title mb-0">Учитель</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="{{ url_for('main.example_profession', profession='doctor') }}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <div class="card-body text-center p-3">
+                        <div class="fs-3 mb-2">🏥</div>
+                        <h6 class="card-title mb-0">Врач</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="py-5 bg-light">
+    <h2 class="text-center mb-5">Советы по составлению резюме</h2>
+    
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-primary">📋 Структура резюме</h5>
+                    <p class="card-text">Резюме должно содержать три основных блока: «Личная информация», «Образование» и «Опыт работы». Заполняйте их максимально точно, придерживаясь хронологического порядка.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-primary">✅ Будьте конкретны</h5>
+                    <p class="card-text">Указывайте конкретные достижения с цифрами: «Увеличил продажи на 30%», «Сократил время обработки заказов на 2 часа». Это производит впечатление на работодателей.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-primary">📸 Добавьте фото</h5>
+                    <p class="card-text">Профессиональное фото увеличивает шансы на приглашение на собеседование. Используйте деловой стиль, нейтральный фон и хорошее освещение.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-primary">🎯 Адаптируйте под вакансию</h5>
+                    <p class="card-text">Для каждой вакансии создавайте отдельную версию резюме, подчеркивая релевантный опыт и навыки. Используйте ключевые слова из описания вакансии.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="py-5">
+    <h2 class="text-center mb-5">Отзывы пользователей</h2>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex mb-3">
+                        <span class="text-warning">★★★★★</span>
+                    </div>
+                    <p class="card-text fst-italic">"Отличный сервис! За 15 минут создал профессиональное резюме. Через неделю получил приглашение на собеседование."</p>
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">А</div>
+                        <div class="ms-3">
+                            <strong>Алексей К.</strong>
+                            <div class="text-muted small">Программист</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex mb-3">
+                        <span class="text-warning">★★★★★</span>
+                    </div>
+                    <p class="card-text fst-italic">"Очень удобно, что можно сразу отправить резюме на HH.ru. AI-помощник помог улучшить описание опыта работы."</p>
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">М</div>
+                        <div class="ms-3">
+                            <strong>Мария С.</strong>
+                            <div class="text-muted small">Маркетолог</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex mb-3">
+                        <span class="text-warning">★★★★☆</span>
+                    </div>
+                    <p class="card-text fst-italic">"Раньше мучился с Word, а тут всё просто и понятно. Шаблоны выглядят современно и профессионально."</p>
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">Д</div>
+                        <div class="ms-3">
+                            <strong>Дмитрий П.</strong>
+                            <div class="text-muted small">Менеджер</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="py-5 bg-light">
+    <h2 class="text-center mb-5">Часто задаваемые вопросы</h2>
+    
+    <div class="col-lg-8 mx-auto">
+        <div class="accordion" id="faqAccordion">
+            <div class="accordion-item border-0 mb-3 shadow-sm">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                        Сервис бесплатный?
+                    </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Да, создание и редактирование резюме полностью бесплатно. Вы можете создавать неограниченное количество резюме, экспортировать их в PDF и отправлять на площадки трудоустройства.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border-0 mb-3 shadow-sm">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                        Как работает AI-ассистент?
+                    </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        AI-ассистент анализирует ваше резюме и дает конкретные рекомендации по улучшению. Он также может помочь улучшить формулировки текста, сделав их более профессиональными и подходящими для вашей должности.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border-0 mb-3 shadow-sm">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                        Можно ли отправить резюме на HH.ru?
+                    </button>
+                </h2>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Да, после подключения вашего аккаунта HH.ru в разделе «Интеграции» вы сможете публиковать резюме напрямую на платформу. Также поддерживаются SuperJob и LinkedIn.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border-0 mb-3 shadow-sm">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                        В каком формате можно скачать резюме?
+                    </button>
+                </h2>
+                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Резюме можно скачать в формате PDF. Это универсальный формат, который корректно отображается на всех устройствах и принимается всеми работодателями.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item border-0 mb-3 shadow-sm">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                        Мои данные в безопасности?
+                    </button>
+                </h2>
+                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Да, мы серьезно относимся к защите ваших данных. Вся информация хранится в зашифрованном виде, и мы никогда не передаем ваши данные третьим лицам без вашего согласия.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="py-5 text-center">
+    <h2 class="mb-4">Готовы создать своё резюме?</h2>
+    <p class="lead text-muted mb-4">Присоединяйтесь к тысячам пользователей, которые уже нашли работу мечты</p>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-5 py-3">Начать бесплатно</a>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    border-radius: 20px;
+    margin: 20px 0;
+}
+
+.hover-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+</style>
+{% endblock %}
