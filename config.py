@@ -6,3 +6,5 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = True
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024
+    APP_LOG_LEVEL = os.environ.get('APP_LOG_LEVEL', 'INFO')
+    APP_LOG_PATH = os.environ.get('APP_LOG_PATH')

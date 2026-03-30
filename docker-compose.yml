@@ -12,9 +12,12 @@ services:
       - SUPERJOB_CLIENT_ID=${SUPERJOB_CLIENT_ID:-}
       - SUPERJOB_CLIENT_SECRET=${SUPERJOB_CLIENT_SECRET:-}
       - SUPERJOB_REDIRECT_URI=${SUPERJOB_REDIRECT_URI:-}
+      - APP_LOG_LEVEL=${APP_LOG_LEVEL:-INFO}
+      - APP_LOG_PATH=${APP_LOG_PATH:-/var/log/skillsphere/app.log}
     volumes:
       - sqlite_data:/app/instance
       - uploads_data:/app/app/static/uploads
+      - logs_data:/var/log/skillsphere
     restart: unless-stopped
 
   prometheus:
@@ -49,8 +52,44 @@ services:
       - prometheus
     restart: unless-stopped
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.3
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.17.3
+    environment:
+      - ELK_INDEX_PREFIX=${ELK_INDEX_PREFIX:-skillsphere}
+    volumes:
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+      - logs_data:/var/log/skillsphere:ro
+    depends_on:
+      - elasticsearch
+      - web
+    restart: unless-stopped
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.3
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+
 volumes:
   sqlite_data:
   uploads_data:
   prometheus_data:
   grafana_data:
+  elasticsearch_data:
+  logs_data:
