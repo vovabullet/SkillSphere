@@ -1,12 +1,15 @@
-from flask import Flask
+from flask import Flask, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
+from prometheus_client import CollectorRegistry, generate_latest, CONTENT_TYPE_LATEST
 from config import Config
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 csrf = CSRFProtect()
+
+_metrics_registry = CollectorRegistry()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -38,7 +41,16 @@ def create_app(config_class=Config):
     
     from app.models.platform_connection import PlatformConnection, ResumePublication
     from app.models.api_settings import ApiSettings
-    
+
+    # Register Prometheus custom collector and expose /metrics endpoint
+    from app.metrics import ResumeProfessionCollector
+    _metrics_registry.register(ResumeProfessionCollector())
+
+    @app.route('/metrics')
+    def metrics():
+        data = generate_latest(_metrics_registry)
+        return Response(data, status=200, mimetype=CONTENT_TYPE_LATEST)
+
     with app.app_context():
         db.create_all()
         create_admin_user()

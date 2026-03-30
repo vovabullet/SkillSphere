@@ -7,7 +7,7 @@ weasyprint>=60.0
 flask-migrate>=4.0.0
 email-validator>=2.1.0
 gigachat
-gigachat
 requests
 urllib3
 cryptography
+prometheus_client>=0.20.0

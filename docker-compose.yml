@@ -1,0 +1,56 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - SESSION_SECRET=${SESSION_SECRET}
+      - GIGACHAT_KEY=${GIGACHAT_KEY:-}
+      - HH_CLIENT_ID=${HH_CLIENT_ID:-}
+      - HH_CLIENT_SECRET=${HH_CLIENT_SECRET:-}
+      - HH_REDIRECT_URI=${HH_REDIRECT_URI:-}
+      - SUPERJOB_CLIENT_ID=${SUPERJOB_CLIENT_ID:-}
+      - SUPERJOB_CLIENT_SECRET=${SUPERJOB_CLIENT_SECRET:-}
+      - SUPERJOB_REDIRECT_URI=${SUPERJOB_REDIRECT_URI:-}
+    volumes:
+      - sqlite_data:/app/instance
+      - uploads_data:/app/app/static/uploads
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    depends_on:
+      - web
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/json:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:
+  uploads_data:
+  prometheus_data:
+  grafana_data:
