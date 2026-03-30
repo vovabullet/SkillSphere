@@ -51,7 +51,11 @@ def configure_logging(app):
         log_dir = os.path.dirname(log_path)
         if log_dir:
             os.makedirs(log_dir, exist_ok=True)
-        has_file = any(isinstance(h, logging.FileHandler) and h.baseFilename == os.path.abspath(log_path) for h in logger.handlers)
+        abs_log_path = os.path.abspath(log_path)
+        has_file = any(
+            isinstance(h, logging.FileHandler) and h.baseFilename == abs_log_path
+            for h in logger.handlers
+        )
         if not has_file:
             file_handler = logging.FileHandler(log_path)
             file_handler.setFormatter(formatter)
