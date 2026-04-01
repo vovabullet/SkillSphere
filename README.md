@@ -317,6 +317,24 @@ pause
 3. Введите логин и пароль admin
 4. Перейдите на вкладку Dashboards и выберите "SkillSphere — Резюме по профессиям"
 
+## Логи и ELK
+
+В проект добавлен стек ELK (Elasticsearch + Logstash + Kibana) через `docker-compose`.
+
+1. Убедитесь, что заполнены переменные в `.env`:
+   - `APP_LOG_LEVEL` (по умолчанию `INFO`)
+   - `APP_LOG_PATH` (по умолчанию `/var/log/skillsphere/app.log`)
+   - `ELK_INDEX_PREFIX` (по умолчанию `skillsphere`)
+2. Запустите инфраструктуру:
+   ```bash
+   docker-compose up -d
+   ```
+3. Сервисы будут доступны:
+   - Elasticsearch: `http://localhost:9200`
+   - Kibana: `http://localhost:5601`
+4. В Kibana создайте Data View по шаблону: `skillsphere-*` (или вашему `ELK_INDEX_PREFIX`).
+5. После генерации логов приложением они появятся в Elasticsearch через Logstash.
+
 ## 📝 Лицензия
 
 Проект создан в учебных целях.

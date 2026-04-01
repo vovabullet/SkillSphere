@@ -1,3 +1,8 @@
+import json
+import logging
+import os
+from datetime import datetime, timezone
+
 from flask import Flask, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -11,9 +16,55 @@ csrf = CSRFProtect()
 
 _metrics_registry = CollectorRegistry()
 
+
+class JsonFormatter(logging.Formatter):
+    def format(self, record):
+        payload = {
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'level': record.levelname,
+            'logger': record.name,
+            'message': record.getMessage(),
+        }
+        if record.exc_info:
+            payload['exception'] = self.formatException(record.exc_info)
+        return json.dumps(payload, ensure_ascii=False)
+
+
+def configure_logging(app):
+    log_level = app.config.get('APP_LOG_LEVEL', 'INFO').upper()
+    log_path = app.config.get('APP_LOG_PATH')
+
+    logger = logging.getLogger()
+    logger.setLevel(getattr(logging, log_level, logging.INFO))
+
+    formatter = JsonFormatter()
+    has_stream = any(isinstance(h, logging.StreamHandler) for h in logger.handlers)
+    if not has_stream:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
+    else:
+        for handler in logger.handlers:
+            handler.setFormatter(formatter)
+
+    if log_path:
+        log_dir = os.path.dirname(log_path)
+        if log_dir:
+            os.makedirs(log_dir, exist_ok=True)
+        abs_log_path = os.path.abspath(log_path)
+        has_file = any(
+            isinstance(h, logging.FileHandler) and h.baseFilename == abs_log_path
+            for h in logger.handlers
+        )
+        if not has_file:
+            file_handler = logging.FileHandler(log_path)
+            file_handler.setFormatter(formatter)
+            logger.addHandler(file_handler)
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    configure_logging(app)
     
     db.init_app(app)
     login_manager.init_app(app)
